@@ -1,0 +1,63 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="cartItem">
+      <h2 data-cy="cartItemDetailsHeading"><span>Cart Item</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span>ID</span></dt>
+        <dd>
+          <span>{{ cartItem.id }}</span>
+        </dd>
+        <dt><span>Name</span></dt>
+        <dd>
+          <span>{{ cartItem.name }}</span>
+        </dd>
+        <dt><span>Category Name</span></dt>
+        <dd>
+          <span>{{ cartItem.categoryName }}</span>
+        </dd>
+        <dt><span>Image</span></dt>
+        <dd>
+          <div *ngIf="cartItem.image">
+            <a (click)="openFile(cartItem.image, cartItem.imageContentType)">
+              <img [src]="'data:' + cartItem.imageContentType + ';base64,' + cartItem.image" style="max-width: 100%" alt="cartItem image" />
+            </a>
+            {{ cartItem.imageContentType }}, {{ byteSize(cartItem.image) }}
+          </div>
+        </dd>
+        <dt><span>Quantity</span></dt>
+        <dd>
+          <span>{{ cartItem.quantity }}</span>
+        </dd>
+        <dt><span>Price</span></dt>
+        <dd>
+          <span>{{ cartItem.price }}</span>
+        </dd>
+        <dt><span>Item</span></dt>
+        <dd>
+          <div *ngIf="cartItem.item">
+            <a [routerLink]="['/item', cartItem.item.id, 'view']">{{ cartItem.item.id }}</a>
+          </div>
+        </dd>
+        <dt><span>User</span></dt>
+        <dd>
+          <span>{{ cartItem.user?.id }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Volver</span>
+      </button>
+
+      <button type="button" [routerLink]="['/cart-item', cartItem.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Editar</span>
+      </button>
+    </div>
+  </div>
+</div>

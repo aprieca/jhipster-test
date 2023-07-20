@@ -1,0 +1,165 @@
+<div>
+  <h2 id="page-heading" data-cy="CartItemHeading">
+    <span>Cart Items</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span>Refrescar lista</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-cart-item"
+        [routerLink]="['/cart-item/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span> Crear nuevo Cart Item </span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <jhi-filter [filters]="filters"></jhi-filter>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="cartItems?.length === 0">
+    <span>Ningún Cart Items encontrado</span>
+  </div>
+
+  <div class="table-responsive table-entities" id="entities" *ngIf="cartItems && cartItems.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+          <th scope="col" jhiSortBy="id">
+            <div class="d-flex">
+              <span>ID</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="name">
+            <div class="d-flex">
+              <span>Name</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="categoryName">
+            <div class="d-flex">
+              <span>Category Name</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="image">
+            <div class="d-flex">
+              <span>Image</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="quantity">
+            <div class="d-flex">
+              <span>Quantity</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="price">
+            <div class="d-flex">
+              <span>Price</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="item.id">
+            <div class="d-flex">
+              <span>Item</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="user.id">
+            <div class="d-flex">
+              <span>User</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cartItem of cartItems; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/cart-item', cartItem.id, 'view']">{{ cartItem.id }}</a>
+          </td>
+          <td>{{ cartItem.name }}</td>
+          <td>{{ cartItem.categoryName }}</td>
+          <td>
+            <a *ngIf="cartItem.image" (click)="openFile(cartItem.image, cartItem.imageContentType)">
+              <img
+                [src]="'data:' + cartItem.imageContentType + ';base64,' + cartItem.image"
+                style="max-height: 30px"
+                alt="cartItem image"
+              />
+            </a>
+            <span *ngIf="cartItem.image">{{ cartItem.imageContentType }}, {{ byteSize(cartItem.image) }}</span>
+          </td>
+          <td>{{ cartItem.quantity }}</td>
+          <td>{{ cartItem.price }}</td>
+          <td>
+            <div *ngIf="cartItem.item">
+              <a [routerLink]="['/item', cartItem.item.id, 'view']">{{ cartItem.item.id }}</a>
+            </div>
+          </td>
+          <td>
+            {{ cartItem.user?.id }}
+          </td>
+          <td class="text-end">
+            <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/cart-item', cartItem.id, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline">Vista</span>
+              </button>
+
+              <button
+                type="submit"
+                [routerLink]="['/cart-item', cartItem.id, 'edit']"
+                class="btn btn-primary btn-sm"
+                data-cy="entityEditButton"
+              >
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline">Editar</span>
+              </button>
+
+              <button type="submit" (click)="delete(cartItem)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline">Eliminar</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="cartItems && cartItems.length > 0">
+    <div class="d-flex justify-content-center">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    </div>
+
+    <div class="d-flex justify-content-center">
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [page]="page"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="navigateToPage($event)"
+      ></ngb-pagination>
+    </div>
+  </div>
+</div>

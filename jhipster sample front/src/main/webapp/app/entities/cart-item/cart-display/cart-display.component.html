@@ -1,0 +1,29 @@
+<div class="container">
+    <div class="row">
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th>Imagen</th>
+          <th>Producto</th>
+          <th>Categoría</th>
+          <th>Cantidad</th>
+          <th>Precio</th>
+          <th>Comprar</th>
+          <th>Eliminar</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let cartItem of cartItems">
+          <td><img class="product-image" [src]="'data:image/jpeg;base64,'+cartItem.image"></td>
+          <td><button>{{cartItem.name}}</button></td>
+          <td>{{cartItem.categoryName}}</td>
+          <td>{{cartItem.quantity}}</td>
+          <td>{{cartItem.price}}</td>
+          <td><button>Comprar</button></td>
+          <td><button>Eliminar</button></td>
+        </tr>
+    </tbody>
+</table>
+<div>
+</div>
+</div>

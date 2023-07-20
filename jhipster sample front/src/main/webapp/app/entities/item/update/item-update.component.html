@@ -1,0 +1,161 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-item-heading" data-cy="ItemCreateUpdateHeading">Crear o editar Item</h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
+          <label class="form-label" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_name">Name</label>
+          <input type="text" class="form-control" name="name" id="field_name" data-cy="name" formControlName="name" />
+          <div *ngIf="editForm.get('name')!.invalid && (editForm.get('name')!.dirty || editForm.get('name')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('name')?.errors?.required"> Este campo es obligatorio. </small>
+            <small class="form-text text-danger" *ngIf="editForm.get('name')?.errors?.minlength">
+              Este campo requiere al menos 3 caracteres.
+            </small>
+            <small class="form-text text-danger" *ngIf="editForm.get('name')?.errors?.maxlength">
+              Este campo no puede superar más de 100 caracteres.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_description">Description</label>
+          <input
+            type="text"
+            class="form-control"
+            name="description"
+            id="field_description"
+            data-cy="description"
+            formControlName="description"
+          />
+          <div *ngIf="editForm.get('description')!.invalid && (editForm.get('description')!.dirty || editForm.get('description')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('description')?.errors?.maxlength">
+              Este campo no puede superar más de 2000 caracteres.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_price">Price</label>
+          <input type="number" class="form-control" name="price" id="field_price" data-cy="price" formControlName="price" />
+          <div *ngIf="editForm.get('price')!.invalid && (editForm.get('price')!.dirty || editForm.get('price')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('price')?.errors?.required"> Este campo es obligatorio. </small>
+            <small class="form-text text-danger" [hidden]="!editForm.get('price')?.errors?.number"> Este campo debe ser un número. </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_image">Image</label>
+          <div>
+            <img
+              [src]="'data:' + editForm.get('imageContentType')!.value + ';base64,' + editForm.get('image')!.value"
+              style="max-height: 100px"
+              *ngIf="editForm.get('image')!.value"
+              alt="item image"
+            />
+            <div *ngIf="editForm.get('image')!.value" class="form-text text-danger clearfix">
+              <span class="pull-start">{{ editForm.get('imageContentType')!.value }}, {{ byteSize(editForm.get('image')!.value!) }}</span>
+              <button
+                type="button"
+                (click)="clearInputImage('image', 'imageContentType', 'file_image')"
+                class="btn btn-secondary btn-xs pull-end"
+              >
+                <fa-icon icon="times"></fa-icon>
+              </button>
+            </div>
+            <input type="file" id="file_image" data-cy="image" (change)="setFileData($event, 'image', true)" accept="image/*" />
+          </div>
+          <input type="hidden" class="form-control" name="image" id="field_image" data-cy="image" formControlName="image" />
+          <input
+            type="hidden"
+            class="form-control"
+            name="imageContentType"
+            id="field_imageContentType"
+            formControlName="imageContentType"
+          />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_imageBg">Image Bg</label>
+          <div>
+            <img
+              [src]="'data:' + editForm.get('imageBgContentType')!.value + ';base64,' + editForm.get('imageBg')!.value"
+              style="max-height: 100px"
+              *ngIf="editForm.get('imageBg')!.value"
+              alt="item image"
+            />
+            <div *ngIf="editForm.get('imageBg')!.value" class="form-text text-danger clearfix">
+              <span class="pull-start"
+                >{{ editForm.get('imageBgContentType')!.value }}, {{ byteSize(editForm.get('imageBg')!.value!) }}</span
+              >
+              <button
+                type="button"
+                (click)="clearInputImage('imageBg', 'imageBgContentType', 'file_imageBg')"
+                class="btn btn-secondary btn-xs pull-end"
+              >
+                <fa-icon icon="times"></fa-icon>
+              </button>
+            </div>
+            <input type="file" id="file_imageBg" data-cy="imageBg" (change)="setFileData($event, 'imageBg', true)" accept="image/*" />
+          </div>
+          <input type="hidden" class="form-control" name="imageBg" id="field_imageBg" data-cy="imageBg" formControlName="imageBg" />
+          <input
+            type="hidden"
+            class="form-control"
+            name="imageBgContentType"
+            id="field_imageBgContentType"
+            formControlName="imageBgContentType"
+          />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_stock">Stock</label>
+          <input type="number" class="form-control" name="stock" id="field_stock" data-cy="stock" formControlName="stock" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_discount">Discount</label>
+          <input type="number" class="form-control" name="discount" id="field_discount" data-cy="discount" formControlName="discount" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_category">Category</label>
+          <select
+            class="form-control"
+            id="field_category"
+            data-cy="category"
+            name="category"
+            formControlName="category"
+            [compareWith]="compareCategory"
+          >
+            <option [ngValue]="null"></option>
+            <option [ngValue]="categoryOption" *ngFor="let categoryOption of categoriesSharedCollection">{{ categoryOption.id }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancelar</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>Guardar</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

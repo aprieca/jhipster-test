@@ -1,0 +1,28 @@
+{
+  "applications": "*",
+  "changelogDate": "20230718163422",
+  "dto": "mapstruct",
+  "embedded": false,
+  "entityTableName": "favorite",
+  "fields": [
+    {
+      "fieldName": "itemId",
+      "fieldType": "Long",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": true,
+  "name": "Favorite",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityField": "id",
+      "otherEntityName": "user",
+      "relationshipName": "user",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceImpl"
+}

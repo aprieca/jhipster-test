@@ -1,0 +1,72 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="item">
+      <h2 data-cy="itemDetailsHeading"><span>Item</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span>ID</span></dt>
+        <dd>
+          <span>{{ item.id }}</span>
+        </dd>
+        <dt><span>Name</span></dt>
+        <dd>
+          <span>{{ item.name }}</span>
+        </dd>
+        <dt><span>Description</span></dt>
+        <dd>
+          <span>{{ item.description }}</span>
+        </dd>
+        <dt><span>Price</span></dt>
+        <dd>
+          <span>{{ item.price }}</span>
+        </dd>
+        <dt><span>Image</span></dt>
+        <dd>
+          <div *ngIf="item.image">
+            <a (click)="openFile(item.image, item.imageContentType)">
+              <img [src]="'data:' + item.imageContentType + ';base64,' + item.image" style="max-width: 100%" alt="item image" />
+            </a>
+            {{ item.imageContentType }}, {{ byteSize(item.image) }}
+          </div>
+        </dd>
+        <dt><span>Image Bg</span></dt>
+        <dd>
+          <div *ngIf="item.imageBg">
+            <a (click)="openFile(item.imageBg, item.imageBgContentType)">
+              <img [src]="'data:' + item.imageBgContentType + ';base64,' + item.imageBg" style="max-width: 100%" alt="item image" />
+            </a>
+            {{ item.imageBgContentType }}, {{ byteSize(item.imageBg) }}
+          </div>
+        </dd>
+        <dt><span>Stock</span></dt>
+        <dd>
+          <span>{{ item.stock }}</span>
+        </dd>
+        <dt><span>Discount</span></dt>
+        <dd>
+          <span>{{ item.discount }}</span>
+        </dd>
+        <dt><span>Category</span></dt>
+        <dd>
+          <div *ngIf="item.category">
+            <a [routerLink]="['/category', item.category.id, 'view']">{{ item.category.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Volver</span>
+      </button>
+
+      <button type="button" [routerLink]="['/item', item.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Editar</span>
+      </button>
+    </div>
+  </div>
+</div>

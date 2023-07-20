@@ -1,0 +1,161 @@
+<div>
+  <h2 id="page-heading" data-cy="ItemHeading">
+    <span>Items</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span>Refrescar lista</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-item"
+        [routerLink]="['/item/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span> Crear nuevo Item </span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <jhi-filter [filters]="filters"></jhi-filter>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="items?.length === 0">
+    <span>Ningún Item encontrado</span>
+  </div>
+
+  <div class="table-responsive table-entities" id="entities" *ngIf="items && items.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+          <th scope="col" jhiSortBy="id">
+            <div class="d-flex">
+              <span>ID</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="name">
+            <div class="d-flex">
+              <span>Name</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="description">
+            <div class="d-flex">
+              <span>Description</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="price">
+            <div class="d-flex">
+              <span>Price</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="image">
+            <div class="d-flex">
+              <span>Image</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="imageBg">
+            <div class="d-flex">
+              <span>Image Bg</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="stock">
+            <div class="d-flex">
+              <span>Stock</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="discount">
+            <div class="d-flex">
+              <span>Discount</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="category.id">
+            <div class="d-flex">
+              <span>Category</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/item', item.id, 'view']">{{ item.id }}</a>
+          </td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.description }}</td>
+          <td>{{ item.price }}</td>
+          <td>
+            <a *ngIf="item.image" (click)="openFile(item.image, item.imageContentType)">
+              <img [src]="'data:' + item.imageContentType + ';base64,' + item.image" style="max-height: 30px" alt="item image" />
+            </a>
+            <span *ngIf="item.image">{{ item.imageContentType }}, {{ byteSize(item.image) }}</span>
+          </td>
+          <td>
+            <a *ngIf="item.imageBg" (click)="openFile(item.imageBg, item.imageBgContentType)">
+              <img [src]="'data:' + item.imageBgContentType + ';base64,' + item.imageBg" style="max-height: 30px" alt="item image" />
+            </a>
+            <span *ngIf="item.imageBg">{{ item.imageBgContentType }}, {{ byteSize(item.imageBg) }}</span>
+          </td>
+          <td>{{ item.stock }}</td>
+          <td>{{ item.discount }}</td>
+          <td>
+            <div *ngIf="item.category">
+              <a [routerLink]="['/category', item.category.id, 'view']">{{ item.category.id}}</a>
+            </div>
+          </td>
+          <td class="text-end">
+            <div class="btn-group">
+              <button type="submit" [routerLink]="['/item', item.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline">Vista</span>
+              </button>
+
+              <button type="submit" [routerLink]="['/item', item.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline">Editar</span>
+              </button>
+
+              <button type="submit" (click)="delete(item)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline">Eliminar</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="items && items.length > 0">
+    <div class="d-flex justify-content-center">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    </div>
+
+    <div class="d-flex justify-content-center">
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [page]="page"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="navigateToPage($event)"
+      ></ngb-pagination>
+    </div>
+  </div>
+</div>
